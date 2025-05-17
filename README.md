@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # DevSync - Developer Collaboration Platform
 
 DevSync is a modern platform designed to enhance developer collaboration through features like code review, standups, and team management.
@@ -146,4 +146,7 @@ This project is licensed under the MIT License.
 =======
 # Devsync-Test-
 Discord For Devs
->>>>>>> 4c82054d3ac78179bd84befb51edb4d8a18c5a95
+4c82054d3ac78179bd84befb51edb4d8a18c5a95
+=======
+
+cb4f8edad03bf9eb6a9b2dc29c7d2b38dc8be6e7
