@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ team.name }} - DevSync{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'dashboard' %}" class="text-gray-600 hover:text-gray-900">Dashboard</a>
+<span class="mx-2">/</span>
+<a href="{% url 'team-list' %}" class="text-gray-600 hover:text-gray-900">Teams</a>
+<span class="mx-2">/</span>
+<span class="text-gray-900">{{ team.name }}</span>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Team Info -->
+    <div class="lg:col-span-2">
+        <div class="card mb-6">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-2xl font-bold">{{ team.name }}</h1>
+                <div class="flex items-center space-x-2">
+                    <button class="btn btn-secondary" hx-get="{% url 'team-edit' team.id %}" hx-target="#modal">
+                        Edit Team
+                    </button>
+                    <button class="btn btn-primary" hx-get="{% url 'team-invite' team.id %}" hx-target="#modal">
+                        Invite Member
+                    </button>
+                </div>
+            </div>
+            <p class="text-gray-600 mb-4">{{ team.description }}</p>
+            <div class="flex items-center space-x-4">
+                <div class="flex-1 bg-gray-200 rounded-full h-2">
+                    <div class="bg-primary rounded-full h-2" style="width: {{ team.vibe_score|floatformat:0 }}0%;"></div>
+                </div>
+                <span class="text-sm font-medium">Team Vibe: {{ team.vibe_score|floatformat:1 }}/10</span>
+            </div>
+        </div>
+
+        <!-- Projects -->
+        <div class="card mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold">Team Projects</h2>
+                <button class="btn btn-primary" hx-get="{% url 'project-create' %}?team={{ team.id }}" hx-target="#modal">
+                    New Project
+                </button>
+            </div>
+            {% if team.projects.exists %}
+                <div class="space-y-4">
+                    {% for project in team.projects.all %}
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <a href="{% url 'project-detail' project.id %}" class="text-lg font-medium hover:text-primary">
+                                {{ project.name }}
+                            </a>
+                            <span class="px-2 py-1 text-sm rounded-full
+                                {% if project.status == 'completed' %}bg-green-100 text-green-700
+                                {% elif project.status == 'in_progress' %}bg-blue-100 text-blue-700
+                                {% elif project.status == 'review' %}bg-yellow-100 text-yellow-700
+                                {% else %}bg-gray-100 text-gray-700{% endif %}">
+                                {{ project.get_status_display }}
+                            </span>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-3">{{ project.description|truncatewords:30 }}</p>
+                        <div class="flex items-center justify-between text-sm text-gray-500">
+                            <span>{{ project.tasks.count }} tasks</span>
+                            <span>Due: {{ project.due_date|date:"M d, Y"|default:"No due date" }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500">No projects yet. Create one to get started!</p>
+            {% endif %}
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card">
+            <h2 class="text-lg font-semibold mb-4">Recent Activity</h2>
+            <div class="space-y-4">
+                {% for activity in recent_activities %}
+                <div class="border-l-4 border-primary pl-4">
+                    <div class="flex items-center mb-2">
+                        <img src="{% if activity.user.developer_profile.avatar %}{{ activity.user.developer_profile.avatar.url }}{% else %}https://ui-avatars.com/api/?name={{ activity.user.get_full_name|urlencode }}{% endif %}"
+                             alt="{{ activity.user.get_full_name }}"
+                             class="w-6 h-6 rounded-full mr-2">
+                        <span class="font-medium">{{ activity.user.get_full_name }}</span>
+                        <span class="text-sm text-gray-500 ml-2">{{ activity.created_at|timesince }} ago</span>
+                    </div>
+                    <p class="text-sm text-gray-600">{{ activity.description }}</p>
+                </div>
+                {% empty %}
+                <p class="text-gray-500">No recent activity.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="lg:col-span-1">
+        <!-- Team Members -->
+        <div class="card mb-6">
+            <h2 class="text-lg font-semibold mb-4">Team Members</h2>
+            <div class="space-y-4">
+                {% for member in team.members.all %}
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <img src="{% if member.developer_profile.avatar %}{{ member.developer_profile.avatar.url }}{% else %}https://ui-avatars.com/api/?name={{ member.get_full_name|urlencode }}{% endif %}"
+                             alt="{{ member.get_full_name }}"
+                             class="w-10 h-10 rounded-full mr-3">
+                        <div>
+                            <h3 class="font-medium">{{ member.get_full_name }}</h3>
+                            <p class="text-sm text-gray-500">{{ member.developer_profile.current_vibe }}</p>
+                        </div>
+                    </div>
+                    <button class="text-gray-400 hover:text-gray-600" 
+                            hx-get="{% url 'member-details' member.id %}" 
+                            hx-target="#modal">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Team Stats -->
+        <div class="card mb-6">
+            <h2 class="text-lg font-semibold mb-4">Team Stats</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                    <div class="text-2xl font-bold text-primary mb-1">{{ team.projects.count }}</div>
+                    <div class="text-sm text-gray-500">Projects</div>
+                </div>
+                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                    <div class="text-2xl font-bold text-primary mb-1">{{ team.members.count }}</div>
+                    <div class="text-sm text-gray-500">Members</div>
+                </div>
+                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                    <div class="text-2xl font-bold text-success mb-1">{{ completed_tasks_count }}</div>
+                    <div class="text-sm text-gray-500">Completed Tasks</div>
+                </div>
+                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                    <div class="text-2xl font-bold text-warning mb-1">{{ pending_tasks_count }}</div>
+                    <div class="text-sm text-gray-500">Pending Tasks</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="card">
+            <h2 class="text-lg font-semibold mb-4">AI Insights</h2>
+            <div class="space-y-4">
+                {% for insight in ai_insights %}
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <div class="flex items-center mb-2">
+                        <span class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white mr-3">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </span>
+                        <div>
+                            <h4 class="font-medium">{{ insight.title }}</h4>
+                            <p class="text-sm text-gray-500">{{ insight.description }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-gray-500">No AI insights available.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Container -->
+<div id="modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <!-- Modal content will be loaded here -->
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('htmx:afterSwap', function(evt) {
+    if (evt.detail.target.id === 'modal') {
+        evt.detail.target.classList.remove('hidden');
+    }
+});
+
+document.addEventListener('click', function(evt) {
+    if (evt.target.id === 'modal') {
+        evt.target.classList.add('hidden');
+    }
+});
+</script>
+{% endblock %} 

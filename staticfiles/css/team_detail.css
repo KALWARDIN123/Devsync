@@ -1,0 +1,271 @@
+/* Team Detail Styles */
+
+/* Team Info */
+.team-info {
+    margin-bottom: 1.5rem;
+}
+
+.team-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.team-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.team-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.team-description {
+    color: #4B5563;
+    margin-bottom: 1rem;
+}
+
+/* Team Vibe */
+.vibe-meter {
+    margin-top: 1rem;
+}
+
+.vibe-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.vibe-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.vibe-score {
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+.vibe-bar {
+    width: 100%;
+    height: 0.5rem;
+    background-color: #E5E7EB;
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.vibe-progress {
+    height: 100%;
+    background-color: #2563EB;
+    border-radius: 9999px;
+    transition: width 300ms ease-in-out;
+}
+
+/* Projects Section */
+.projects-section {
+    margin-bottom: 1.5rem;
+}
+
+.project-card {
+    padding: 1rem;
+    background-color: #F9FAFB;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.project-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.project-title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #111827;
+}
+
+.project-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-completed {
+    background-color: #D1FAE5;
+    color: #059669;
+}
+
+.status-in-progress {
+    background-color: #DBEAFE;
+    color: #2563EB;
+}
+
+.status-review {
+    background-color: #FEF3C7;
+    color: #D97706;
+}
+
+.project-description {
+    font-size: 0.875rem;
+    color: #4B5563;
+    margin-bottom: 0.75rem;
+}
+
+.project-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+/* Activity Feed */
+.activity-feed {
+    margin-top: 1.5rem;
+}
+
+.activity-item {
+    border-left: 4px solid #2563EB;
+    padding-left: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.activity-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.activity-avatar {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 9999px;
+}
+
+.activity-user {
+    font-weight: 500;
+    color: #111827;
+}
+
+.activity-time {
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+.activity-description {
+    font-size: 0.875rem;
+    color: #4B5563;
+}
+
+/* Team Members */
+.members-section {
+    margin-bottom: 1.5rem;
+}
+
+.member-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.member-item:last-child {
+    border-bottom: none;
+}
+
+.member-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.member-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+}
+
+.member-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.member-name {
+    font-weight: 500;
+    color: #111827;
+}
+
+.member-role {
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+/* Team Stats */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background-color: #F9FAFB;
+    border-radius: 0.5rem;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6B7280;
+}
+
+/* AI Insights */
+.insights-section {
+    margin-top: 1.5rem;
+}
+
+.insight-card {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem;
+    background-color: #F9FAFB;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.insight-icon {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2563EB;
+    color: white;
+    border-radius: 9999px;
+}
+
+.insight-content h4 {
+    font-weight: 500;
+    color: #111827;
+    margin-bottom: 0.25rem;
+}
+
+.insight-content p {
+    font-size: 0.875rem;
+    color: #6B7280;
+} 
