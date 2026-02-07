@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Add Team Members - {{ team.name }} - DevSync{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'dashboard' %}" class="breadcrumb-item">Dashboard</a>
+<a href="{% url 'team_detail' team.id %}" class="breadcrumb-item">{{ team.name }}</a>
+<span class="breadcrumb-item">Add Members</span>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2">
+    <!-- Add Member Form -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Add Team Member</h2>
+        </div>
+        
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}" class="form-label">Email Address</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <div class="text-danger mt-1">
+                    {{ form.email.errors }}
+                </div>
+                {% endif %}
+                <p class="text-muted mt-1">{{ form.email.help_text }}</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.role.id_for_label }}" class="form-label">Role</label>
+                {{ form.role }}
+                {% if form.role.errors %}
+                <div class="text-danger mt-1">
+                    {{ form.role.errors }}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="flex justify-between items-center mt-6">
+                <a href="{% url 'team_detail' team.id %}" class="btn btn-secondary">Done</a>
+                <button type="submit" class="btn btn-primary">Add Member</button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Current Members -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Current Members</h2>
+            <span class="badge badge-primary">{{ team_members.count }} members</span>
+        </div>
+        
+        <div class="divide-y">
+            {% for member in team_members %}
+            <div class="py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <img src="{% if member.user.developer_profile.avatar %}{{ member.user.developer_profile.avatar.url }}{% else %}https://ui-avatars.com/api/?name={{ member.user.get_full_name|urlencode }}&background=3B82F6&color=fff{% endif %}"
+                         alt="{{ member.user.get_full_name }}"
+                         class="user-avatar">
+                    <div>
+                        <h3 class="font-medium">{{ member.user.get_full_name }}</h3>
+                        <p class="text-muted">{{ member.get_role_display }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span class="badge {% if member.status == 'online' %}badge-success{% elif member.status == 'away' %}badge-warning{% else %}badge-secondary{% endif %}">
+                        {{ member.get_status_display }}
+                    </span>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                No team members yet
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

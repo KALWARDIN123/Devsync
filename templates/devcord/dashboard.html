@@ -1,169 +1,154 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
 
 {% block title %}Dashboard - DevSync{% endblock %}
 
 {% block breadcrumbs %}
-<a href="{% url 'dashboard' %}" class="text-gray-900">Dashboard</a>
+<a href="{% url 'dashboard' %}" class="breadcrumb-item">Dashboard</a>
 {% endblock %}
 
 {% block content %}
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <!-- Team Overview Card -->
-    <div class="card">
-        <h2 class="text-lg font-semibold mb-4">Team Overview</h2>
-        {% if teams %}
-            <div class="space-y-4">
-                {% for team in teams %}
-                <div class="p-4 bg-gray-50 rounded-lg">
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="font-medium">{{ team.name }}</h3>
-                        <span class="text-sm text-gray-500">{{ team.members.count }} members</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <div class="flex-1 bg-gray-200 rounded-full h-2">
-                            <div class="bg-primary rounded-full h-2" style="width: {{ team.vibe_score|floatformat:0 }}0%;"></div>
-                        </div>
-                        <span class="text-sm font-medium">{{ team.vibe_score|floatformat:1 }}</span>
+<div class="dashboard-container">
+    <h1 class="dashboard-header">Dashboard</h1>
+
+    <!-- Stats Grid -->
+    <div class="dashboard-grid">
+        <!-- Active Projects -->
+        <div class="stat-card projects">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+            </svg>
+            <h2>Active Projects</h2>
+            <p>{{ active_projects_count|default:"0" }}</p>
+        </div>
+
+        <!-- Team Members -->
+        <div class="stat-card members">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+            <h2>Team Members</h2>
+            <p>{{ team_members_count|default:"0" }}</p>
+        </div>
+
+        <!-- Pending Reviews -->
+        <div class="stat-card reviews">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <h2>Pending Reviews</h2>
+            <p>{{ pending_reviews_count|default:"0" }}</p>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2 class="section-title">Recent Activity</h2>
+            <a href="{% url 'activity-list' %}" class="view-all">View All</a>
+        </div>
+        {% if recent_activities %}
+            <div class="activity-list">
+                {% for activity in recent_activities %}
+                <div class="activity-item">
+                    <span class="activity-user">{{ activity.user.get_full_name }}</span>
+                    <span class="activity-action">{{ activity.action }}</span>
+                    <span class="activity-target">{{ activity.target_name }}</span>
+                    <span class="activity-time">{{ activity.timestamp|timesince }} ago</span>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">No recent activity</div>
+        {% endif %}
+    </div>
+
+    <!-- Active Projects -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2 class="section-title">Active Projects</h2>
+            <a href="{% url 'project-list' %}" class="view-all">View All</a>
+        </div>
+        {% if active_projects %}
+            <div class="project-list">
+                {% for project in active_projects %}
+                <div class="project-item">
+                    <h3 class="project-name">{{ project.name }}</h3>
+                    <p class="project-description">{{ project.description|truncatewords:30 }}</p>
+                    <div class="project-meta">
+                        <span class="project-type">{{ project.get_project_type_display }}</span>
+                        <span class="project-status">{{ project.get_status_display }}</span>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         {% else %}
-            <p class="text-gray-500">No teams found. Create or join a team to get started.</p>
-            <a href="{% url 'team-create' %}" class="btn btn-primary mt-4">Create Team</a>
+            <div class="empty-state">No active projects</div>
         {% endif %}
     </div>
 
-    <!-- My Tasks Card -->
-    <div class="card">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold">My Tasks</h2>
-            <a href="{% url 'task-list' %}" class="text-primary hover:text-primary-dark text-sm">View All</a>
+    <!-- Recent Code Reviews -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2 class="section-title">Recent Code Reviews</h2>
+            <a href="{% url 'code-review-list' %}" class="view-all">View All</a>
         </div>
-        {% if tasks %}
-            <div class="space-y-3">
-                {% for task in tasks %}
-                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
-                    <div class="flex-1">
-                        <h4 class="font-medium">{{ task.title }}</h4>
-                        <p class="text-sm text-gray-500">{{ task.project.name }}</p>
+        {% if recent_code_reviews %}
+            <div class="review-list">
+                {% for review in recent_code_reviews %}
+                <div class="review-item">
+                    <h3 class="review-title">{{ review.title }}</h3>
+                    <p class="review-description">{{ review.description|truncatewords:30 }}</p>
+                    <div class="review-meta">
+                        <span class="review-author">By {{ review.author.get_full_name }}</span>
+                        <span class="review-status">{{ review.get_status_display }}</span>
                     </div>
-                    <span class="px-2 py-1 text-xs rounded-full
-                        {% if task.status == 'todo' %}bg-gray-100 text-gray-700
-                        {% elif task.status == 'in_progress' %}bg-blue-100 text-blue-700
-                        {% elif task.status == 'review' %}bg-yellow-100 text-yellow-700
-                        {% else %}bg-green-100 text-green-700{% endif %}">
-                        {{ task.get_status_display }}
-                    </span>
                 </div>
                 {% endfor %}
             </div>
         {% else %}
-            <p class="text-gray-500">No tasks assigned to you.</p>
+            <div class="empty-state">No recent code reviews</div>
         {% endif %}
     </div>
 
-    <!-- Recent Activity Card -->
-    <div class="card">
-        <h2 class="text-lg font-semibold mb-4">Recent Activity</h2>
-        <div class="space-y-4">
-            {% for standup in recent_standups %}
-            <div class="border-l-4 border-primary pl-4">
-                <div class="flex items-center mb-2">
-                    <img src="{% if standup.developer.developer_profile.avatar %}{{ standup.developer.developer_profile.avatar.url }}{% else %}https://ui-avatars.com/api/?name={{ standup.developer.get_full_name|urlencode }}{% endif %}"
-                         alt="{{ standup.developer.get_full_name }}"
-                         class="w-6 h-6 rounded-full mr-2">
-                    <span class="font-medium">{{ standup.developer.get_full_name }}</span>
-                    <span class="text-sm text-gray-500 ml-2">{{ standup.date|date:"M d" }}</span>
+    <!-- AI Insights -->
+    <div class="ai-insights">
+        <div class="ai-insights-header">
+            <h2 class="section-title">AI Insights</h2>
+            <button class="refresh-insights">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+            </button>
+        </div>
+        {% if ai_insights %}
+            <div class="ai-insights-content">
+                {% for insight in ai_insights %}
+                <div class="insight-item">
+                    <h3>{{ insight.title }}</h3>
+                    <p>{{ insight.description }}</p>
                 </div>
-                <p class="text-sm text-gray-600">{{ standup.ai_summary|truncatewords:30 }}</p>
+                {% endfor %}
             </div>
-            {% empty %}
-            <p class="text-gray-500">No recent activity.</p>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- Code Review Stats Card -->
-    <div class="card">
-        <h2 class="text-lg font-semibold mb-4">Code Review Stats</h2>
-        <div class="grid grid-cols-2 gap-4">
-            <div class="text-center p-4 bg-gray-50 rounded-lg">
-                <div class="text-2xl font-bold text-primary mb-1">{{ pending_reviews_count }}</div>
-                <div class="text-sm text-gray-500">Pending Reviews</div>
-            </div>
-            <div class="text-center p-4 bg-gray-50 rounded-lg">
-                <div class="text-2xl font-bold text-success mb-1">{{ completed_reviews_count }}</div>
-                <div class="text-sm text-gray-500">Completed Reviews</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- AI Insights Card -->
-    <div class="card">
-        <h2 class="text-lg font-semibold mb-4">AI Insights</h2>
-        <div class="space-y-4">
-            {% for insight in ai_insights %}
-            <div class="p-4 bg-gray-50 rounded-lg">
-                <div class="flex items-center mb-2">
-                    <span class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white mr-3">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
-                    </span>
-                    <div>
-                        <h4 class="font-medium">{{ insight.title }}</h4>
-                        <p class="text-sm text-gray-500">{{ insight.description }}</p>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <p class="text-gray-500">No AI insights available.</p>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- Quick Actions Card -->
-    <div class="card">
-        <h2 class="text-lg font-semibold mb-4">Quick Actions</h2>
-        <div class="grid grid-cols-2 gap-4">
-            <button class="btn btn-primary" hx-get="{% url 'create-standup' %}" hx-target="#modal">
-                Daily Standup
-            </button>
-            <button class="btn btn-secondary" hx-get="{% url 'code-review' %}" hx-target="#modal">
-                Code Review
-            </button>
-            <button class="btn btn-primary" hx-get="{% url 'create-task' %}" hx-target="#modal">
-                New Task
-            </button>
-            <button class="btn btn-secondary" hx-get="{% url 'team-vibe' %}" hx-target="#modal">
-                Team Vibe
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Container -->
-<div id="modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-        <!-- Modal content will be loaded here -->
+        {% else %}
+            <div class="empty-state">No insights available at the moment</div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-document.addEventListener('htmx:afterSwap', function(evt) {
-    if (evt.detail.target.id === 'modal') {
-        evt.detail.target.classList.remove('hidden');
-    }
-});
-
-document.addEventListener('click', function(evt) {
-    if (evt.target.id === 'modal') {
-        evt.target.classList.add('hidden');
-    }
-});
+    // Refresh AI Insights
+    document.querySelector('.refresh-insights').addEventListener('click', function() {
+        htmx.ajax('GET', '{% url "refresh-insights" %}', {
+            target: '.ai-insights-content',
+            swap: 'innerHTML'
+        });
+    });
 </script>
 {% endblock %} 

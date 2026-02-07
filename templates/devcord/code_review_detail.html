@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ review.title }} - Code Review - DevSync{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'dashboard' %}" class="breadcrumb-item">Dashboard</a>
+<a href="{% url 'code-review-list' %}" class="breadcrumb-item">Code Reviews</a>
+<span class="breadcrumb-item">{{ review.title }}</span>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Content -->
+    <div class="lg:col-span-2">
+        <div class="card">
+            <div class="card-header">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h1 class="text-2xl font-bold">{{ review.title }}</h1>
+                        <div class="flex items-center space-x-4 mt-2">
+                            <span class="text-gray-500">
+                                <a href="{% url 'project_detail' review.project.id %}" class="link">{{ review.project.name }}</a>
+                            </span>
+                            {% if review.status == 'pending' %}
+                            <span class="badge badge-warning">Pending</span>
+                            {% elif review.status == 'approved' %}
+                            <span class="badge badge-success">Approved</span>
+                            {% else %}
+                            <span class="badge badge-danger">Changes Requested</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if can_review %}
+                    <div class="flex space-x-2">
+                        <button class="btn btn-success">Approve</button>
+                        <button class="btn btn-danger">Request Changes</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="p-4">
+                <div class="prose max-w-none">
+                    {{ review.description|linebreaks }}
+                </div>
+                
+                {% if review.ai_suggestion %}
+                <div class="mt-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4 rounded-lg text-white">
+                    <h3 class="font-medium mb-2">AI Suggestions</h3>
+                    <div class="opacity-90">
+                        {{ review.ai_suggestion|linebreaks }}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="mt-6">
+                    <h3 class="font-medium mb-4">Code Changes</h3>
+                    <div class="bg-gray-800 rounded-lg overflow-hidden">
+                        <pre class="p-4 text-white overflow-x-auto"><code>{{ review.code_snippet }}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Comments Section -->
+        <div class="card mt-6">
+            <div class="card-header">
+                <h2 class="card-title">Comments</h2>
+            </div>
+            
+            <div class="divide-y">
+                {% for comment in review.comments.all %}
+                <div class="p-4">
+                    <div class="flex items-start space-x-4">
+                        <img src="{% if comment.author.developer_profile.avatar %}{{ comment.author.developer_profile.avatar.url }}{% else %}https://ui-avatars.com/api/?name={{ comment.author.get_full_name|urlencode }}{% endif %}"
+                             alt="{{ comment.author.get_full_name }}"
+                             class="w-10 h-10 rounded-full">
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="font-medium">{{ comment.author.get_full_name }}</span>
+                                    <span class="text-gray-500 text-sm ml-2">{{ comment.created_at|timesince }} ago</span>
+                                </div>
+                                {% if comment.author == request.user %}
+                                <button class="btn-icon text-gray-500 hover:text-gray-700">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                                    </svg>
+                                </button>
+                                {% endif %}
+                            </div>
+                            <div class="mt-2 prose">
+                                {{ comment.content|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    No comments yet
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Comment Form -->
+            <div class="p-4 bg-gray-50">
+                <form method="post" action="{% url 'code-review-comment' review.id %}" class="space-y-4">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="comment" class="form-label">Add a comment</label>
+                        <textarea name="content" id="comment" rows="3" class="form-input" placeholder="Write your comment..."></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="btn btn-primary">Post Comment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="lg:col-span-1">
+        <!-- Review Details -->
+        <div class="card mb-6">
+            <div class="card-header">
+                <h2 class="card-title">Details</h2>
+            </div>
+            
+            <div class="divide-y">
+                <div class="p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Author</h3>
+                    <div class="flex items-center mt-2">
+                        <img src="{% if review.author.developer_profile.avatar %}{{ review.author.developer_profile.avatar.url }}{% else %}https://ui-avatars.com/api/?name={{ review.author.get_full_name|urlencode }}{% endif %}"
+                             alt="{{ review.author.get_full_name }}"
+                             class="w-8 h-8 rounded-full">
+                        <span class="ml-2">{{ review.author.get_full_name }}</span>
+                    </div>
+                </div>
+                
+                <div class="p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Reviewer</h3>
+                    <div class="flex items-center mt-2">
+                        <img src="{% if review.reviewer.developer_profile.avatar %}{{ review.reviewer.developer_profile.avatar.url }}{% else %}https://ui-avatars.com/api/?name={{ review.reviewer.get_full_name|urlencode }}{% endif %}"
+                             alt="{{ review.reviewer.get_full_name }}"
+                             class="w-8 h-8 rounded-full">
+                        <span class="ml-2">{{ review.reviewer.get_full_name }}</span>
+                    </div>
+                </div>
+                
+                <div class="p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Created</h3>
+                    <p class="mt-2">{{ review.created_at|date:"F j, Y" }}</p>
+                </div>
+                
+                <div class="p-4">
+                    <h3 class="text-sm font-medium text-gray-500">Last Updated</h3>
+                    <p class="mt-2">{{ review.updated_at|timesince }} ago</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Team Members -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Team Members</h2>
+            </div>
+            
+            <div class="divide-y">
+                {% for member in team.members.all %}
+                <div class="p-4 flex items-center justify-between">
+                    <div class="flex items-center">
+                        <img src="{% if member.developer_profile.avatar %}{{ member.developer_profile.avatar.url }}{% else %}https://ui-avatars.com/api/?name={{ member.get_full_name|urlencode }}{% endif %}"
+                             alt="{{ member.get_full_name }}"
+                             class="w-8 h-8 rounded-full">
+                        <span class="ml-2">{{ member.get_full_name }}</span>
+                    </div>
+                    <span class="badge {% if member.developer_profile.status == 'online' %}badge-success{% else %}badge-secondary{% endif %}">
+                        {{ member.developer_profile.get_status_display }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

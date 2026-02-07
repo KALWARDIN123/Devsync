@@ -44,148 +44,246 @@
     background-color: var(--accent-color);
 }
 
-/* Team Cards Grid */
-.teams-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
-    margin-bottom: 4rem;
+/* Team List Styles */
+.teams-section {
+    margin-bottom: 2rem;
 }
 
-/* Team Card */
+.teams-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--gray-900);
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Team Cards */
 .team-card {
-    background-color: var(--surface-color);
-    border: 1px solid var(--border-color);
-    border-radius: 0.375rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.2s ease;
 }
 
 .team-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
 }
 
-.team-card-content {
-    padding: 2rem;
-}
-
-.team-card-header {
-    margin-bottom: 1.5rem;
+.team-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--gray-200);
 }
 
 .team-name {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 1.5rem;
-    color: var(--text-primary);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gray-900);
     margin-bottom: 0.5rem;
-    line-height: 1.3;
 }
 
-.team-meta {
+.team-description {
+    color: var(--gray-600);
     font-size: 0.875rem;
-    color: var(--text-tertiary);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    line-height: 1.5;
 }
 
-.team-members-count {
+/* Team Stats */
+.team-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 1rem;
+    background-color: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.team-stat {
+    text-align: center;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--gray-900);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Team Actions */
+.team-actions {
+    padding: 1rem;
     display: flex;
-    align-items: center;
     gap: 0.5rem;
 }
 
-.team-members-count svg {
-    width: 1.25rem;
-    height: 1.25rem;
-    color: var(--text-tertiary);
+/* Team Create Form Styles */
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
 }
 
-/* Team Card Actions */
-.team-card-actions {
-    margin-top: 2rem;
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--gray-700);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--gray-300);
+    border-radius: 0.375rem;
+    transition: border-color 0.2s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+}
+
+.error-feedback {
+    color: var(--danger);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.form-actions {
     display: flex;
     gap: 1rem;
+    margin-top: 2rem;
 }
 
-.team-card-btn {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.875rem;
+/* Team Invite Styles */
+.invite-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.invite-code-section,
+.invite-form-section,
+.pending-invites-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.invite-code {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: var(--gray-50);
+    border-radius: 0.375rem;
+    margin-bottom: 0.5rem;
+}
+
+.invite-code span {
+    font-family: monospace;
+    font-size: 1.25rem;
+    color: var(--gray-900);
+}
+
+.invite-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.invite-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background-color: var(--gray-50);
+    border-radius: 0.375rem;
+}
+
+.invite-email {
     font-weight: 500;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    border-radius: 0.25rem;
-    transition: all 0.2s ease;
+    color: var(--gray-900);
 }
 
-.team-card-btn.primary {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
+.invite-date {
+    font-size: 0.875rem;
+    color: var(--gray-500);
 }
 
-.team-card-btn.primary:hover {
-    background-color: var(--primary-hover);
+/* Join Team Section */
+.join-team-section {
+    max-width: 400px;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.team-card-btn.secondary {
-    background-color: transparent;
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
+.join-team-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--gray-900);
 }
 
-.team-card-btn.secondary:hover {
-    background-color: var(--background-color);
+.join-team-form {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.join-team-form .form-group {
+    flex: 1;
+    margin: 0;
 }
 
 /* Empty State */
 .empty-state {
     text-align: center;
-    padding: 4rem 2rem;
-    background-color: var(--surface-color);
-    border: 1px solid var(--border-color);
-    border-radius: 0.375rem;
+    padding: 3rem;
 }
 
 .empty-state-text {
-    color: var(--text-secondary);
-    margin-bottom: 1.5rem;
-    font-size: 1.125rem;
+    color: var(--gray-600);
+    margin-bottom: 1rem;
 }
 
 /* Create Team Button */
 .create-team-btn {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 0.5rem;
-    padding: 1rem 2rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary);
     color: white;
-    background-color: var(--primary-color);
-    border: none;
-    border-radius: 0.25rem;
-    transition: all 0.2s ease;
+    border-radius: 0.375rem;
     text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
 }
 
 .create-team-btn:hover {
-    background-color: var(--primary-hover);
-    transform: translateY(-2px);
-}
-
-.create-team-btn svg {
-    width: 1.25rem;
-    height: 1.25rem;
+    background-color: #3367d6;
 }
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-    .teams-grid {
+    .team-grid {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
 }
@@ -208,7 +306,7 @@
         font-size: 1.25rem;
     }
 
-    .team-card-content {
+    .team-header {
         padding: 1.5rem;
     }
 
@@ -218,21 +316,192 @@
 }
 
 @media (max-width: 640px) {
-    .teams-grid {
-        grid-template-columns: 1fr;
-    }
-
     .teams-header {
         margin-bottom: 2rem;
         padding: 1rem 0;
     }
 
-    .team-card-actions {
+    .join-team-form {
         flex-direction: column;
     }
 
-    .team-card-btn {
+    .team-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .team-actions {
+        flex-direction: column;
+    }
+
+    .team-actions .btn {
         width: 100%;
-        text-align: center;
+    }
+}
+
+/* Team Info Section */
+.team-info-section {
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Team Members Section */
+.team-members-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.members-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.member-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--gray-50);
+    border-radius: 0.375rem;
+}
+
+.member-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.member-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.member-details h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--gray-900);
+    margin: 0;
+}
+
+.member-role {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+}
+
+.member-status {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+}
+
+.status-active {
+    background-color: var(--success);
+    color: white;
+}
+
+.status-away {
+    background-color: var(--warning);
+    color: var(--gray-900);
+}
+
+.status-offline {
+    background-color: var(--gray-200);
+    color: var(--gray-700);
+}
+
+/* Invite Status */
+.invite-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.invite-status {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+}
+
+/* Notification Container */
+#notification-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+}
+
+.notification {
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0.375rem;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.3s ease-out;
+}
+
+.notification-success {
+    border-left: 4px solid var(--success);
+}
+
+.notification-error {
+    border-left: 4px solid var(--danger);
+}
+
+.notification-info {
+    border-left: 4px solid var(--primary);
+}
+
+.notification.fade-out {
+    animation: fadeOut 0.3s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Responsive Design for Team Invite Page */
+@media (max-width: 768px) {
+    .member-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .member-status {
+        align-self: flex-start;
+    }
+
+    .invite-item {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .invite-status {
+        align-self: flex-start;
     }
 } 

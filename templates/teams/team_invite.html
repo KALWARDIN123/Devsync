@@ -1,0 +1,373 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Invite Members - {{ team.name }} - DevSync{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .header-title {
+        font-size: 1.875rem;
+        font-weight: 600;
+        color: var(--gray-900);
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+    }
+
+    .card {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--gray-200);
+        background: linear-gradient(to right, #4285f4, #34a853);
+        color: white;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-subtitle {
+        font-size: 0.875rem;
+        opacity: 0.9;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+        background: var(--gray-50);
+        padding: 1.25rem;
+        border-radius: 0.75rem;
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #4285f4;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--gray-600);
+    }
+
+    .invite-code-section {
+        background: var(--gray-50);
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .code-display {
+        font-family: monospace;
+        font-size: 1.25rem;
+        color: var(--gray-800);
+        background: white;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--gray-300);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 1rem 0;
+    }
+
+    .copy-btn {
+        background: #4285f4;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+        background: #3574e2;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        color: var(--gray-700);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--gray-300);
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #4285f4;
+        box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+        outline: none;
+    }
+
+    .form-text {
+        font-size: 0.75rem;
+        color: var(--gray-500);
+        margin-top: 0.25rem;
+    }
+
+    .btn-primary {
+        background: #4285f4;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary:hover {
+        background: #3574e2;
+    }
+
+    .members-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .member-card {
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .member-avatar {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .member-info {
+        flex: 1;
+    }
+
+    .member-name {
+        font-weight: 500;
+        color: var(--gray-900);
+        font-size: 0.875rem;
+    }
+
+    .member-role {
+        font-size: 0.75rem;
+        color: var(--gray-500);
+    }
+
+    .pending-invites {
+        margin-top: 1.5rem;
+    }
+
+    .invite-list {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .invite-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        background: var(--gray-50);
+        border-radius: 0.5rem;
+    }
+
+    .invite-email {
+        font-size: 0.875rem;
+        color: var(--gray-700);
+    }
+
+    .invite-status {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        background: #e8f0fe;
+        color: #4285f4;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'dashboard' %}" class="breadcrumb-item">Dashboard</a>
+<a href="{% url 'team-list' %}" class="breadcrumb-item">Teams</a>
+<a href="{% url 'team-detail' team.id %}" class="breadcrumb-item">{{ team.name }}</a>
+<span class="breadcrumb-item">Invite Members</span>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1 class="header-title">Invite Members to {{ team.name }}</h1>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Team Information</h2>
+                    <p class="card-subtitle">{{ team.description }}</p>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">{{ team.members.count }}</div>
+                            <div class="stat-label">Members</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">{{ pending_invites.count }}</div>
+                            <div class="stat-label">Pending Invites</div>
+                        </div>
+                    </div>
+
+                    <div class="invite-code-section">
+                        <h3 class="section-title">Team Invite Code</h3>
+                        <div class="code-display">
+                            <span>{{ team.invite_code }}</span>
+                            <button class="copy-btn" onclick="copyInviteCode()">
+                                Copy Code
+                            </button>
+                        </div>
+                        <p class="form-text">Share this code with team members to join</p>
+                    </div>
+
+                    <form method="post" class="invite-form">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="form-label">Email Addresses</label>
+                            {{ form.emails }}
+                            <div class="form-text">Enter multiple email addresses separated by commas</div>
+                        </div>
+                        <button type="submit" class="btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                            </svg>
+                            Send Invites
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            {% if pending_invites %}
+            <div class="card mt-6">
+                <div class="card-header">
+                    <h2 class="card-title">Pending Invites</h2>
+                </div>
+                <div class="card-body">
+                    <div class="invite-list">
+                        {% for invite in pending_invites %}
+                        <div class="invite-item">
+                            <span class="invite-email">{{ invite.email }}</span>
+                            <span class="invite-status">Pending</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Current Members</h2>
+                </div>
+                <div class="card-body">
+                    <div class="members-grid">
+                        {% for member in team_members %}
+                        <div class="member-card">
+                            <img src="{% if member.user.developer_profile.avatar %}{{ member.user.developer_profile.avatar.url }}{% else %}https://ui-avatars.com/api/?name={{ member.user.get_full_name|urlencode }}{% endif %}"
+                                 alt="{{ member.user.get_full_name }}"
+                                 class="member-avatar">
+                            <div class="member-info">
+                                <div class="member-name">{{ member.user.get_full_name }}</div>
+                                <div class="member-role">{{ member.role }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyInviteCode() {
+    const code = "{{ team.invite_code }}";
+    navigator.clipboard.writeText(code).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = 'Copied!';
+        setTimeout(() => {
+            btn.textContent = 'Copy Code';
+        }, 2000);
+    });
+}
+</script>
+{% endblock %} 

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Activity History - DevSync{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'dashboard' %}" class="breadcrumb-item">Dashboard</a>
+<span class="breadcrumb-item">Activity History</span>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h1 class="section-title">{{ title }}</h1>
+        </div>
+
+        {% if activities %}
+            <div class="activity-list">
+                {% for activity in activities %}
+                <div class="activity-item">
+                    <div class="activity-content">
+                        <div class="activity-header">
+                            <span class="activity-user">{{ activity.user.get_full_name }}</span>
+                            <span class="activity-time">{{ activity.timestamp|timesince }} ago</span>
+                        </div>
+                        <div class="activity-details">
+                            <span class="activity-action">{{ activity.action }}</span>
+                            <span class="activity-target">{{ activity.target_name }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if is_paginated %}
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="empty-state">No activity found</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

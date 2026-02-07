@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Team - DevSync{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-subtitle {
+        color: var(--gray-600);
+        font-size: 0.875rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        color: var(--gray-700);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--gray-300);
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+        font-size: 0.875rem;
+    }
+
+    .form-control:focus {
+        border-color: #4285f4;
+        box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+        outline: none;
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .form-text {
+        font-size: 0.75rem;
+        color: var(--gray-500);
+        margin-top: 0.25rem;
+    }
+
+    .error-feedback {
+        color: #ea4335;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--gray-200);
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        flex: 1;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #4285f4;
+        color: white;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background: #3574e2;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #4285f4;
+        border: 1px solid #4285f4;
+    }
+
+    .btn-secondary:hover {
+        background: #f3f4f6;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'dashboard' %}" class="text-gray-600 hover:text-gray-900">Dashboard</a>
+<span class="mx-2">/</span>
+<a href="{% url 'team-list' %}" class="text-gray-600 hover:text-gray-900">Teams</a>
+<span class="mx-2">/</span>
+<span class="text-gray-900">Create Team</span>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="form-container">
+        <div class="form-header">
+            <h1 class="form-title">Create a New Team</h1>
+            <p class="form-subtitle">Start collaborating with your team members</p>
+        </div>
+
+        <form method="post" class="create-team-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.name.id_for_label }}" class="form-label">Team Name</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <div class="error-feedback text-red-600 text-sm mt-1">
+                        {{ form.name.errors }}
+                    </div>
+                {% endif %}
+                <small class="form-text">Choose a unique and memorable name for your team</small>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <div class="error-feedback">
+                        {{ form.description.errors }}
+                    </div>
+                {% endif %}
+                <small class="form-text">Describe the purpose and goals of your team</small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create Team</button>
+                <a href="{% url 'team-list' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/teams.js' %}"></script>
+{% endblock %} 

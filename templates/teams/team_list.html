@@ -4,98 +4,314 @@
 {% block title %}Teams - DevSync{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/main.css' %}">
-<link rel="stylesheet" href="{% static 'css/teams.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .team-card {
+        background: white;
+        border-radius: 1rem;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid var(--gray-200);
+    }
+
+    .team-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .team-header {
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+        color: white;
+    }
+
+    .team-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .team-description {
+        font-size: 0.875rem;
+        opacity: 0.9;
+    }
+
+    .team-stats {
+        display: flex;
+        justify-content: space-around;
+        padding: 1.5rem;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+    }
+
+    .team-stat {
+        text-align: center;
+    }
+
+    .team-stat-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--gray-900);
+        display: block;
+    }
+
+    .team-stat-label {
+        font-size: 0.875rem;
+        color: var(--gray-500);
+    }
+
+    .team-actions {
+        padding: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        background: var(--gray-50);
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        flex: 1;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background: #4285f4;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #3574e2;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #4285f4;
+        border: 1px solid #4285f4;
+    }
+
+    .btn-secondary:hover {
+        background: #f3f4f6;
+    }
+
+    .join-team-form {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .form-group {
+        flex: 1;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--gray-300);
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #4285f4;
+        box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+        outline: none;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 1rem;
+        margin-top: 2rem;
+    }
+
+    .empty-state-text {
+        font-size: 1.125rem;
+        color: var(--gray-600);
+        margin-bottom: 1.5rem;
+    }
+
+    .section-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--gray-900);
+    }
+
+    .create-team-btn {
+        background: #4285f4;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .create-team-btn:hover {
+        background: #3574e2;
+    }
+
+    .create-team-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+</style>
 {% endblock %}
 
 {% block breadcrumbs %}
-<a href="{% url 'dashboard' %}" class="breadcrumb-item">Dashboard</a>
-<span class="breadcrumb-item">Teams</span>
+<a href="{% url 'dashboard' %}" class="text-gray-600 hover:text-gray-900">Dashboard</a>
+<span class="mx-2">/</span>
+<span class="text-gray-900">Teams</span>
 {% endblock %}
 
 {% block content %}
-<div class="teams-header">
-    <h1 class="teams-title">Your Teams</h1>
-    <p class="teams-subtitle">Manage and collaborate with your teams in one place</p>
-</div>
+<div class="dashboard-container">
+    <h1 class="dashboard-header">Teams</h1>
 
-<div class="container">
-    <!-- Teams you created -->
-    <section class="mb-8">
-        <h2 class="section-title">Teams You Created</h2>
-        <div class="teams-grid">
+    <!-- Stats Grid -->
+    <div class="dashboard-grid">
+        <!-- Teams Count -->
+        <div class="stat-card projects">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+            <h2>Total Teams</h2>
+            <p>{{ created_teams.count|add:member_teams.count }}</p>
+        </div>
+
+        <!-- Teams You Lead -->
+        <div class="stat-card members">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h2>Teams You Lead</h2>
+            <p>{{ created_teams.count }}</p>
+        </div>
+
+        <!-- Teams You're In -->
+        <div class="stat-card reviews">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+            <h2>Teams You're In</h2>
+            <p>{{ member_teams.count }}</p>
+        </div>
+    </div>
+
+    <!-- Join Team Section -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2 class="section-title">Join a Team</h2>
+            <a href="{% url 'team-create' %}" class="create-team-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Create Team
+            </a>
+        </div>
+        <form method="post" action="{% url 'team-join' %}" class="join-team-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" name="invite_code" class="form-control" placeholder="Enter team invite code" required>
+            </div>
+        </form>
+    </div>
+
+    <!-- Teams You Lead Section -->
+    {% if created_teams %}
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2 class="section-title">Teams You Lead</h2>
+        </div>
+        <div class="team-grid">
             {% for team in created_teams %}
             <div class="team-card">
-                <div class="team-card-content">
-                    <div class="team-card-header">
-                        <h3 class="team-name">{{ team.name }}</h3>
-                        <div class="team-meta">
-                            <div class="team-members-count">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                </svg>
-                                <span>{{ team.members.count }} members</span>
-                            </div>
-                        </div>
+                <div class="team-header">
+                    <h3 class="team-name">{{ team.name }}</h3>
+                    <p class="team-description">{{ team.description }}</p>
+                </div>
+                <div class="team-stats">
+                    <div class="team-stat">
+                        <span class="team-stat-value">{{ team.members.count }}</span>
+                        <span class="team-stat-label">Members</span>
                     </div>
-                    <div class="team-card-actions">
-                        <a href="{% url 'team-detail' team.id %}" class="team-card-btn primary">View Team</a>
+                    <div class="team-stat">
+                        <span class="team-stat-value">{{ team.projects.count }}</span>
+                        <span class="team-stat-label">Projects</span>
                     </div>
                 </div>
-            </div>
-            {% empty %}
-            <div class="empty-state">
-                <p class="empty-state-text">You haven't created any teams yet.</p>
-                <a href="{% url 'team-create' %}" class="create-team-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    Create a Team
-                </a>
+                <div class="team-actions">
+                    <a href="{% url 'team-detail' team.id %}" class="btn btn-primary">View Team</a>
+                    <a href="{% url 'team-invite' team.id %}" class="btn btn-secondary">Invite Members</a>
+                </div>
             </div>
             {% endfor %}
         </div>
-    </section>
+    </div>
+    {% endif %}
 
-    <!-- Teams you're part of -->
-    <section>
-        <h2 class="section-title">Teams You're Part Of</h2>
-        <div class="teams-grid">
+    <!-- Teams You're In Section -->
+    {% if member_teams %}
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2 class="section-title">Teams You're In</h2>
+        </div>
+        <div class="team-grid">
             {% for team in member_teams %}
             <div class="team-card">
-                <div class="team-card-content">
-                    <div class="team-card-header">
-                        <h3 class="team-name">{{ team.name }}</h3>
-                        <div class="team-meta">
-                            <div class="team-members-count">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                </svg>
-                                <span>{{ team.members.count }} members</span>
-                            </div>
-                        </div>
+                <div class="team-header">
+                    <h3 class="team-name">{{ team.name }}</h3>
+                    <p class="team-description">{{ team.description }}</p>
+                </div>
+                <div class="team-stats">
+                    <div class="team-stat">
+                        <span class="team-stat-value">{{ team.members.count }}</span>
+                        <span class="team-stat-label">Members</span>
                     </div>
-                    <div class="team-card-actions">
-                        <a href="{% url 'team-detail' team.id %}" class="team-card-btn primary">View Team</a>
+                    <div class="team-stat">
+                        <span class="team-stat-value">{{ team.projects.count }}</span>
+                        <span class="team-stat-label">Projects</span>
                     </div>
                 </div>
-            </div>
-            {% empty %}
-            <div class="empty-state">
-                <p class="empty-state-text">You're not a member of any teams yet.</p>
+                <div class="team-actions">
+                    <a href="{% url 'team-detail' team.id %}" class="btn btn-primary">View Team</a>
+                </div>
             </div>
             {% endfor %}
         </div>
-    </section>
-
-    <!-- Create Team Button -->
-    <div class="text-center mt-8">
-        <a href="{% url 'team-create' %}" class="create-team-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            Create New Team
-        </a>
     </div>
+    {% endif %}
+
+    {% if not created_teams and not member_teams %}
+    <div class="empty-state">
+        <p class="empty-state-text">You haven't created any teams yet.</p>
+        <a href="{% url 'team-create' %}" class="btn btn-primary">Create a Team</a>
+    </div>
+    {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/teams.js' %}"></script>
 {% endblock %} 

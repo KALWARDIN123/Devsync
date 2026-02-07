@@ -1,0 +1,429 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Projects - DevSync{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    .project-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .project-card {
+        background: white;
+        border-radius: 1rem;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid var(--gray-200);
+    }
+
+    .project-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .project-header {
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+        color: white;
+    }
+
+    .project-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .project-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.875rem;
+        opacity: 0.9;
+    }
+
+    .project-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .project-meta-item svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .project-content {
+        padding: 1.5rem;
+    }
+
+    .project-description {
+        color: var(--gray-600);
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .project-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .project-tag {
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        background: var(--gray-100);
+        color: var(--gray-700);
+    }
+
+    .project-footer {
+        padding: 1rem 1.5rem;
+        background: var(--gray-50);
+        border-top: 1px solid var(--gray-200);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .project-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .status-active {
+        background: rgba(52, 168, 83, 0.1);
+        color: #34a853;
+    }
+
+    .status-completed {
+        background: rgba(66, 133, 244, 0.1);
+        color: #4285f4;
+    }
+
+    .status-archived {
+        background: rgba(234, 67, 53, 0.1);
+        color: #ea4335;
+    }
+
+    .project-members {
+        display: flex;
+        align-items: center;
+    }
+
+    .member-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--gray-200);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        color: var(--gray-600);
+        margin-left: -0.5rem;
+        border: 2px solid white;
+    }
+
+    .member-avatar:first-child {
+        margin-left: 0;
+    }
+
+    .member-count {
+        margin-left: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--gray-500);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--gray-900);
+    }
+
+    .section-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #4285f4;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #3574e2;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #4285f4;
+        border: 1px solid #4285f4;
+    }
+
+    .btn-secondary:hover {
+        background: #f3f4f6;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 1rem;
+        border: 2px dashed var(--gray-200);
+    }
+
+    .empty-state-icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 1.5rem;
+        color: var(--gray-400);
+    }
+
+    .empty-state-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state-description {
+        color: var(--gray-600);
+        margin-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'dashboard' %}" class="text-gray-600 hover:text-gray-900">Dashboard</a>
+<span class="mx-2">/</span>
+<span class="text-gray-900">Projects</span>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="section-header">
+        <h1 class="section-title">Projects</h1>
+        <div class="section-actions">
+            {% if user_teams %}
+            <a href="{% url 'project-create' %}" class="btn btn-primary">
+                Create Project
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if active_projects %}
+    <section class="mb-8">
+        <h2 class="text-lg font-semibold mb-4">Active Projects</h2>
+        <div class="project-grid">
+            {% for project in active_projects %}
+            <a href="{% url 'project-detail' project.id %}" class="project-card">
+                <div class="project-header">
+                    <h3 class="project-title">{{ project.name }}</h3>
+                    <div class="project-meta">
+                        <div class="project-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            {{ project.team.members.count }}
+                        </div>
+                        <div class="project-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                            {{ project.tasks.count }}
+                        </div>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <p class="project-description">{{ project.description }}</p>
+                    {% if project.tags %}
+                    <div class="project-tags">
+                        {% for tag in project.tags %}
+                        <span class="project-tag">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="project-footer">
+                    <span class="project-status status-{{ project.status }}">
+                        {{ project.get_status_display }}
+                    </span>
+                    <div class="project-members">
+                        {% for member in project.team.members.all|slice:":3" %}
+                        <div class="member-avatar" title="{{ member.user.get_full_name }}">
+                            {{ member.user.get_full_name|slice:":1" }}
+                        </div>
+                        {% endfor %}
+                        {% if project.team.members.count > 3 %}
+                        <span class="member-count">+{{ project.team.members.count|add:"-3" }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if completed_projects %}
+    <section class="mb-8">
+        <h2 class="text-lg font-semibold mb-4">Completed Projects</h2>
+        <div class="project-grid">
+            {% for project in completed_projects %}
+            <a href="{% url 'project-detail' project.id %}" class="project-card">
+                <div class="project-header">
+                    <h3 class="project-title">{{ project.name }}</h3>
+                    <div class="project-meta">
+                        <div class="project-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            {{ project.team.members.count }}
+                        </div>
+                        <div class="project-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                            {{ project.tasks.count }}
+                        </div>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <p class="project-description">{{ project.description }}</p>
+                    {% if project.tags %}
+                    <div class="project-tags">
+                        {% for tag in project.tags %}
+                        <span class="project-tag">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="project-footer">
+                    <span class="project-status status-{{ project.status }}">
+                        {{ project.get_status_display }}
+                    </span>
+                    <div class="project-members">
+                        {% for member in project.team.members.all|slice:":3" %}
+                        <div class="member-avatar" title="{{ member.user.get_full_name }}">
+                            {{ member.user.get_full_name|slice:":1" }}
+                        </div>
+                        {% endfor %}
+                        {% if project.team.members.count > 3 %}
+                        <span class="member-count">+{{ project.team.members.count|add:"-3" }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if archived_projects %}
+    <section>
+        <h2 class="text-lg font-semibold mb-4">Archived Projects</h2>
+        <div class="project-grid">
+            {% for project in archived_projects %}
+            <a href="{% url 'project-detail' project.id %}" class="project-card">
+                <div class="project-header">
+                    <h3 class="project-title">{{ project.name }}</h3>
+                    <div class="project-meta">
+                        <div class="project-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            {{ project.team.members.count }}
+                        </div>
+                        <div class="project-meta-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                            {{ project.tasks.count }}
+                        </div>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <p class="project-description">{{ project.description }}</p>
+                    {% if project.tags %}
+                    <div class="project-tags">
+                        {% for tag in project.tags %}
+                        <span class="project-tag">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="project-footer">
+                    <span class="project-status status-{{ project.status }}">
+                        {{ project.get_status_display }}
+                    </span>
+                    <div class="project-members">
+                        {% for member in project.team.members.all|slice:":3" %}
+                        <div class="member-avatar" title="{{ member.user.get_full_name }}">
+                            {{ member.user.get_full_name|slice:":1" }}
+                        </div>
+                        {% endfor %}
+                        {% if project.team.members.count > 3 %}
+                        <span class="member-count">+{{ project.team.members.count|add:"-3" }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if not active_projects and not completed_projects and not archived_projects %}
+    <div class="empty-state">
+        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+        </svg>
+        <h3 class="empty-state-title">No Projects Yet</h3>
+        <p class="empty-state-description">
+            {% if user_teams %}
+            Start by creating your first project to track your team's work.
+            {% else %}
+            Join or create a team to start managing projects together.
+            {% endif %}
+        </p>
+        {% if user_teams %}
+        <a href="{% url 'project-create' %}" class="btn btn-primary">
+            Create Your First Project
+        </a>
+        {% else %}
+        <a href="{% url 'team-create' %}" class="btn btn-primary">
+            Create a Team
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

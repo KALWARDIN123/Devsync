@@ -1,0 +1,12 @@
+{% if ai_insights %}
+    <div class="ai-insights-content">
+        {% for insight in ai_insights %}
+        <div class="insight-item">
+            <h3>{{ insight.title }}</h3>
+            <p>{{ insight.description }}</p>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">No insights available at the moment</div>
+{% endif %} 

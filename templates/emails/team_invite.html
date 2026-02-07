@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4285f4;
+        }
+        .content {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .invite-code {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 20px;
+            margin: 20px 0;
+            border: 1px solid #ddd;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #4285f4;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">DevSync</div>
+    </div>
+    
+    <div class="content">
+        <h2>You're Invited to Join {{ team_name }}!</h2>
+        
+        <p>Hi there,</p>
+        
+        <p>{{ inviter_name }} has invited you to join their team "{{ team_name }}" on DevSync.</p>
+        
+        {% if team_description %}
+        <p><strong>Team Description:</strong><br>{{ team_description }}</p>
+        {% endif %}
+        
+        <h3>How to Join:</h3>
+        <ol>
+            <li>Visit <a href="{{ join_url }}">DevSync Team Join Page</a></li>
+            <li>Enter the following invite code:</li>
+        </ol>
+        
+        <div class="invite-code">
+            {{ invite_code }}
+        </div>
+        
+        <p><strong>Note:</strong> This invite will expire in {{ expires_in_days }} days.</p>
+        
+        <a href="{{ join_url }}" class="button">Join Team Now</a>
+    </div>
+    
+    <div class="footer">
+        <p>This invitation was sent to you through DevSync. If you didn't expect this invitation, you can safely ignore it.</p>
+        <p>© {% now "Y" %} DevSync. All rights reserved.</p>
+    </div>
+</body>
+</html> 

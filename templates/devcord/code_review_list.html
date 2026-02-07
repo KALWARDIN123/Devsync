@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Code Reviews - DevSync{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'dashboard' %}" class="breadcrumb-item">Dashboard</a>
+<span class="breadcrumb-item">Code Reviews</span>
+{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Code Reviews</h1>
+    <a href="{% url 'create-code-review' %}" class="btn btn-primary">
+        <svg class="icon-left" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        New Code Review
+    </a>
+</div>
+
+<!-- Reviews to Do -->
+<div class="card mb-6">
+    <div class="card-header">
+        <h2 class="card-title">Reviews to Do</h2>
+        <span class="badge badge-warning">{{ to_review|length }}</span>
+    </div>
+    
+    <div class="divide-y">
+        {% for review in to_review %}
+        <div class="review-item p-4">
+            <div class="review-header flex justify-between items-start mb-3">
+                <div>
+                    <h3 class="text-lg font-medium">
+                        <a href="{% url 'code-review-detail' review.id %}" class="link">{{ review.title }}</a>
+                    </h3>
+                    <p class="text-gray-600">{{ review.description|truncatechars:150 }}</p>
+                </div>
+                <span class="badge badge-warning">Pending Review</span>
+            </div>
+            <div class="review-meta flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <img src="{% if review.author.developer_profile.avatar %}{{ review.author.developer_profile.avatar.url }}{% else %}https://ui-avatars.com/api/?name={{ review.author.get_full_name|urlencode }}{% endif %}"
+                             alt="{{ review.author.get_full_name }}"
+                             class="w-6 h-6 rounded-full">
+                        <span class="text-sm text-gray-500">{{ review.author.get_full_name }}</span>
+                    </div>
+                    <span class="text-sm text-gray-500">{{ review.project.name }}</span>
+                </div>
+                <div class="flex items-center space-x-2 text-sm text-gray-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Requested {{ review.created_at|timesince }} ago</span>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            No pending reviews
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- My Submissions -->
+<div class="card mb-6">
+    <div class="card-header">
+        <h2 class="card-title">My Submissions</h2>
+        <span class="badge badge-primary">{{ my_submissions|length }}</span>
+    </div>
+    
+    <div class="divide-y">
+        {% for review in my_submissions %}
+        <div class="review-item p-4">
+            <div class="review-header flex justify-between items-start mb-3">
+                <div>
+                    <h3 class="text-lg font-medium">
+                        <a href="{% url 'code-review-detail' review.id %}" class="link">{{ review.title }}</a>
+                    </h3>
+                    <p class="text-gray-600">{{ review.description|truncatechars:150 }}</p>
+                </div>
+                {% if review.status == 'pending' %}
+                <span class="badge badge-warning">Pending</span>
+                {% elif review.status == 'approved' %}
+                <span class="badge badge-success">Approved</span>
+                {% else %}
+                <span class="badge badge-danger">Changes Requested</span>
+                {% endif %}
+            </div>
+            <div class="review-meta flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <img src="{% if review.reviewer.developer_profile.avatar %}{{ review.reviewer.developer_profile.avatar.url }}{% else %}https://ui-avatars.com/api/?name={{ review.reviewer.get_full_name|urlencode }}{% endif %}"
+                             alt="{{ review.reviewer.get_full_name }}"
+                             class="w-6 h-6 rounded-full">
+                        <span class="text-sm text-gray-500">{{ review.reviewer.get_full_name }}</span>
+                    </div>
+                    <span class="text-sm text-gray-500">{{ review.project.name }}</span>
+                </div>
+                <div class="flex items-center space-x-2 text-sm text-gray-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Submitted {{ review.created_at|timesince }} ago</span>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            No submissions yet
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- All Reviews -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">All Reviews</h2>
+        <span class="badge badge-secondary">{{ code_reviews|length }}</span>
+    </div>
+    
+    <div class="divide-y">
+        {% for review in code_reviews %}
+        <div class="review-item p-4">
+            <div class="review-header flex justify-between items-start mb-3">
+                <div>
+                    <h3 class="text-lg font-medium">
+                        <a href="{% url 'code-review-detail' review.id %}" class="link">{{ review.title }}</a>
+                    </h3>
+                    <p class="text-gray-600">{{ review.description|truncatechars:150 }}</p>
+                </div>
+                {% if review.status == 'pending' %}
+                <span class="badge badge-warning">Pending</span>
+                {% elif review.status == 'approved' %}
+                <span class="badge badge-success">Approved</span>
+                {% else %}
+                <span class="badge badge-danger">Changes Requested</span>
+                {% endif %}
+            </div>
+            <div class="review-meta flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <img src="{% if review.author.developer_profile.avatar %}{{ review.author.developer_profile.avatar.url }}{% else %}https://ui-avatars.com/api/?name={{ review.author.get_full_name|urlencode }}{% endif %}"
+                             alt="{{ review.author.get_full_name }}"
+                             class="w-6 h-6 rounded-full">
+                        <span class="text-sm text-gray-500">{{ review.author.get_full_name }}</span>
+                    </div>
+                    <span class="text-sm text-gray-500">{{ review.project.name }}</span>
+                </div>
+                <div class="flex items-center space-x-2 text-sm text-gray-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>{{ review.created_at|timesince }} ago</span>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            No code reviews yet
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

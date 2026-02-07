@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ task.title }} - DevSync{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    .task-header {
+        background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+        padding: 2rem;
+        border-radius: 1rem;
+        color: white;
+        margin-bottom: 2rem;
+    }
+
+    .task-title {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .task-meta {
+        display: flex;
+        gap: 2rem;
+        margin-top: 1rem;
+    }
+
+    .task-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .task-meta-item svg {
+        width: 20px;
+        height: 20px;
+        opacity: 0.9;
+    }
+
+    .task-status {
+        padding: 0.25rem 1rem;
+        border-radius: 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .task-priority {
+        padding: 0.25rem 1rem;
+        border-radius: 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .priority-low {
+        background: rgba(52, 168, 83, 0.2);
+        color: #34a853;
+    }
+
+    .priority-medium {
+        background: rgba(251, 188, 5, 0.2);
+        color: #fbbc05;
+    }
+
+    .priority-high {
+        background: rgba(234, 67, 53, 0.2);
+        color: #ea4335;
+    }
+
+    .task-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+    }
+
+    .task-main {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .task-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .card {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--gray-900);
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #4285f4;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #3574e2;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #4285f4;
+        border: 1px solid #4285f4;
+    }
+
+    .btn-secondary:hover {
+        background: #f3f4f6;
+    }
+
+    .btn-success {
+        background: #34a853;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #2d9346;
+    }
+
+    .member-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .member-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .member-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--gray-200);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        color: var(--gray-600);
+    }
+
+    .member-info {
+        flex: 1;
+    }
+
+    .member-name {
+        font-weight: 500;
+        color: var(--gray-900);
+    }
+
+    .member-role {
+        font-size: 0.875rem;
+        color: var(--gray-500);
+    }
+
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .activity-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--gray-50);
+        border-radius: 0.5rem;
+    }
+
+    .activity-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--gray-200);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .activity-content {
+        flex: 1;
+    }
+
+    .activity-text {
+        color: var(--gray-900);
+    }
+
+    .activity-meta {
+        font-size: 0.875rem;
+        color: var(--gray-500);
+        margin-top: 0.25rem;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'dashboard' %}" class="text-gray-600 hover:text-gray-900">Dashboard</a>
+<span class="mx-2">/</span>
+<a href="{% url 'project-list' %}" class="text-gray-600 hover:text-gray-900">Projects</a>
+<span class="mx-2">/</span>
+<a href="{% url 'project-detail' task.project.id %}" class="text-gray-600 hover:text-gray-900">{{ task.project.name }}</a>
+<span class="mx-2">/</span>
+<span class="text-gray-900">{{ task.title }}</span>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="task-header">
+        <div class="flex justify-between items-start">
+            <h1 class="task-title">{{ task.title }}</h1>
+            {% if can_edit %}
+            <div class="flex gap-2">
+                <a href="{% url 'task-edit' task.id %}" class="btn btn-secondary">Edit Task</a>
+                {% if task.status != 'completed' %}
+                <form method="post" action="{% url 'task-complete' task.id %}" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">
+                        Complete Task
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <p class="text-white opacity-90">{{ task.description }}</p>
+
+        <div class="task-meta">
+            <div class="task-meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                {% if task.assigned_to %}
+                {{ task.assigned_to.get_full_name }}
+                {% else %}
+                Unassigned
+                {% endif %}
+            </div>
+            <div class="task-meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                {% if task.due_date %}
+                Due {{ task.due_date|date:"M d, Y" }}
+                {% else %}
+                No due date
+                {% endif %}
+            </div>
+            <div class="task-meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="task-status">{{ task.get_status_display }}</span>
+            </div>
+            <div class="task-meta-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                <span class="task-priority priority-{{ task.priority }}">{{ task.get_priority_display }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="task-content">
+        <div class="task-main">
+            <!-- Description Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Description</h2>
+                </div>
+                <div class="prose prose-sm max-w-none">
+                    {{ task.description|linebreaks }}
+                </div>
+            </div>
+
+            <!-- Activity Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Activity</h2>
+                </div>
+                {% if activities %}
+                <div class="activity-list">
+                    {% for activity in activities %}
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-text">
+                                <strong>{{ activity.user.get_full_name }}</strong>
+                                {{ activity.action }}
+                            </p>
+                            <p class="activity-meta">{{ activity.timestamp|timesince }} ago</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-gray-500">No recent activity.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="task-sidebar">
+            <!-- Task Info Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Task Info</h2>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500">Project</h3>
+                        <p class="mt-1">
+                            <a href="{% url 'project-detail' task.project.id %}" class="text-blue-600 hover:text-blue-800">
+                                {{ task.project.name }}
+                            </a>
+                        </p>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500">Created</h3>
+                        <p class="mt-1">{{ task.created_at|date:"M d, Y" }}</p>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500">Last Updated</h3>
+                        <p class="mt-1">{{ task.updated_at|date:"M d, Y" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Members Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Team Members</h2>
+                </div>
+                <div class="member-list">
+                    {% for member in task.project.team.members.all %}
+                    <div class="member-item">
+                        <div class="member-avatar">
+                            {{ member.user.get_full_name|slice:":1" }}
+                        </div>
+                        <div class="member-info">
+                            <h3 class="member-name">{{ member.user.get_full_name }}</h3>
+                            <p class="member-role">{{ member.get_role_display }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

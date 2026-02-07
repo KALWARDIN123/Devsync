@@ -1,0 +1,13 @@
+<h3>Security Settings</h3>
+<p>
+    <a href="{% url 'password_change' %}" class="btn btn-secondary">Change Password</a>
+</p>
+
+{# Placeholders for future security features #}
+{#
+<p>Two-Factor Authentication: [Enable/Disable Toggle]</p>
+<p><button class="btn btn-secondary">Logout from All Devices</button></p>
+<p><button class="btn btn-secondary">View Login Activity</button></p>
+#}
+
+{# Note on requiring current password: Django's built-in password change form handles this. For other sensitive changes, you might need custom forms that require the current password. #} 

@@ -2,30 +2,110 @@
 
 /* Dashboard Layout */
 .dashboard-container {
-    display: grid;
-    gap: 3rem;
-    padding: 2rem 0;
+    padding: 2rem;
 }
 
 .dashboard-header {
-    text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
 
-.dashboard-title {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 2.5rem;
-    font-weight: 500;
-    color: var(--text-primary);
-    letter-spacing: -0.02em;
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    padding: 2rem;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 200px;
+}
+
+.stat-card svg {
+    width: 64px;
+    height: 64px;
     margin-bottom: 1rem;
 }
 
-.dashboard-subtitle {
-    font-size: 1.125rem;
-    color: var(--text-secondary);
-    max-width: 600px;
-    margin: 0 auto;
+.stat-card.projects {
+    background-color: #4285f4;
+    color: white;
+}
+
+.stat-card.members {
+    background-color: #34a853;
+    color: white;
+}
+
+.stat-card.reviews {
+    background-color: #fbbc05;
+    color: white;
+}
+
+.dashboard-section {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.view-all {
+    font-size: 0.875rem;
+    color: #4285f4;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    background-color: #f3f4f6;
+}
+
+.view-all:hover {
+    background-color: #e5e7eb;
+}
+
+.ai-insights {
+    background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.ai-insights-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.ai-insights-content {
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #6b7280;
 }
 
 /* Activity Feed */
@@ -325,32 +405,19 @@
 .progress-value.danger { background-color: var(--danger); }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-    .dashboard-container {
-        gap: 2rem;
-        padding: 1.5rem 0;
-    }
-    
-    .dashboard-header {
-        margin-bottom: 2rem;
-    }
-    
-    .dashboard-title {
-        font-size: 2rem;
-    }
-    
-    .stats-grid {
+@media (max-width: 1024px) {
+    .dashboard-grid {
         grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .team-grid {
-        grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 640px) {
-    .stats-grid {
+    .dashboard-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .dashboard-container {
+        padding: 1rem;
     }
     
     .activity-item,
@@ -381,4 +448,90 @@
         align-items: flex-start;
         gap: 0.5rem;
     }
+}
+
+/* Activity List Styles */
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.activity-item {
+    background-color: white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    border: 1px solid var(--gray-200);
+    transition: transform 0.2s ease;
+}
+
+.activity-item:hover {
+    transform: translateY(-2px);
+}
+
+.activity-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.activity-user {
+    font-weight: 500;
+    color: var(--gray-900);
+}
+
+.activity-time {
+    font-size: 0.875rem;
+    color: var(--gray-500);
+}
+
+.activity-details {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    color: var(--gray-700);
+}
+
+.activity-action {
+    font-weight: 500;
+}
+
+.activity-target {
+    color: var(--primary);
+}
+
+/* Pagination */
+.pagination {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.pagination a {
+    color: var(--gray-600);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    background-color: white;
+    border: 1px solid var(--gray-200);
+    transition: all 0.2s ease;
+}
+
+.pagination a:hover {
+    background-color: var(--gray-50);
+    color: var(--gray-900);
+}
+
+.pagination .current {
+    padding: 0.5rem 1rem;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 0.375rem;
 } 

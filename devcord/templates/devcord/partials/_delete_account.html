@@ -1,0 +1,37 @@
+<h3 class="text-danger">Danger Zone</h3>
+<div class="card border-danger mb-3">
+    <div class="card-body text-danger">
+        <h5 class="card-title">Permanently Delete Account</h5>
+        <p class="card-text">
+            Deleting your account is irreversible. All your data, including teams, projects, tasks, and code reviews, will be permanently removed.
+        </p>
+        {# Placeholder for the delete account form/button - backend not implemented #}
+        {#
+        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete My Account</button>
+        #}
+    </div>
+</div>
+
+{# You would typically have a modal for confirmation #}
+{#
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Account Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you absolutely sure you want to delete your account? This action cannot be undone.</p>
+                {# You might require password re-entry here #}
+                {# <input type="password" class="form-control" placeholder="Enter your password to confirm"> #}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                {# This button would trigger the actual deletion, likely via a separate form/view #}
+                {# <button type="button" class="btn btn-danger">Confirm Deletion</button> #}
+            </div>
+        </div>
+    </div>
+</div>
+#} 

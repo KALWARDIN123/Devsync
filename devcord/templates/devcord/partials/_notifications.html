@@ -1,0 +1,37 @@
+<h3>Notification Preferences</h3>
+<form method="post">
+    {% csrf_token %}
+    {# Display fields from the SettingsForm related to notifications #}
+    <div class="form-check mb-3">
+        {{ form.email_notifications }}
+        <label class="form-check-label" for="{{ form.email_notifications.id_for_label }}">
+            Receive email notifications
+        </label>
+         {% if form.email_notifications.errors %}<div class="form-text text-danger">{{ form.email_notifications.errors }}</div>{% endif %}
+    </div>
+     <div class="form-check mb-3">
+        {{ form.slack_notifications }}
+        <label class="form-check-label" for="{{ form.slack_notifications.id_for_label }}">
+            Receive Slack notifications
+        </label>
+         {% if form.slack_notifications.errors %}<div class="form-text text-danger">{{ form.slack_notifications.errors }}</div>{% endif %}
+    </div>
+
+    {# Placeholders for more granular notification toggles #}
+    {#
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" value="" id="newProjectAssignments">
+        <label class="form-check-label" for="newProjectAssignments">
+            Notify me of new project assignments
+        </label>
+    </div>
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" value="" id="teamMentions">
+        <label class="form-check-label" for="teamMentions">
+            Notify me of team mentions
+        </label>
+    </div>
+    #}
+
+    <button type="submit" class="btn btn-primary">Save Preferences</button>
+</form> 

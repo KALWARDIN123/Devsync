@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - DevSync{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .form-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-subtitle {
+        color: var(--gray-600);
+        font-size: 0.875rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 500;
+        color: var(--gray-700);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--gray-300);
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #4285f4;
+        box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
+    }
+
+    .form-help {
+        font-size: 0.875rem;
+        color: var(--gray-500);
+        margin-top: 0.25rem;
+    }
+
+    .form-error {
+        color: #ea4335;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #4285f4;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #3574e2;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #4285f4;
+        border: 1px solid #4285f4;
+    }
+
+    .btn-secondary:hover {
+        background: #f3f4f6;
+    }
+
+    .priority-options {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    .priority-option {
+        padding: 0.75rem;
+        border: 1px solid var(--gray-300);
+        border-radius: 0.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .priority-option.selected {
+        border-color: #4285f4;
+        background: rgba(66, 133, 244, 0.1);
+    }
+
+    .priority-option.low {
+        border-color: #34a853;
+        color: #34a853;
+    }
+
+    .priority-option.medium {
+        border-color: #fbbc05;
+        color: #fbbc05;
+    }
+
+    .priority-option.high {
+        border-color: #ea4335;
+        color: #ea4335;
+    }
+
+    .priority-option.low.selected {
+        background: rgba(52, 168, 83, 0.1);
+    }
+
+    .priority-option.medium.selected {
+        background: rgba(251, 188, 5, 0.1);
+    }
+
+    .priority-option.high.selected {
+        background: rgba(234, 67, 53, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'dashboard' %}" class="text-gray-600 hover:text-gray-900">Dashboard</a>
+<span class="mx-2">/</span>
+<a href="{% url 'project-list' %}" class="text-gray-600 hover:text-gray-900">Projects</a>
+{% if form.instance.project %}
+<span class="mx-2">/</span>
+<a href="{% url 'project-detail' form.instance.project.id %}" class="text-gray-600 hover:text-gray-900">{{ form.instance.project.name }}</a>
+{% endif %}
+<span class="mx-2">/</span>
+<span class="text-gray-900">{{ title }}</span>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="form-container">
+        <div class="form-header">
+            <h1 class="form-title">{{ title }}</h1>
+            <p class="form-subtitle">
+                {% if form.instance.pk %}
+                Update task details and assignments
+                {% else %}
+                Create a new task to track work items
+                {% endif %}
+            </p>
+        </div>
+
+        <form method="post" class="task-form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="form-error mb-4">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label class="form-label" for="{{ form.title.id_for_label }}">Task Title</label>
+                {{ form.title }}
+                {% if form.title.help_text %}
+                <p class="form-help">{{ form.title.help_text }}</p>
+                {% endif %}
+                {% if form.title.errors %}
+                <p class="form-error">{{ form.title.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="{{ form.description.id_for_label }}">Description</label>
+                {{ form.description }}
+                {% if form.description.help_text %}
+                <p class="form-help">{{ form.description.help_text }}</p>
+                {% endif %}
+                {% if form.description.errors %}
+                <p class="form-error">{{ form.description.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="{{ form.project.id_for_label }}">Project</label>
+                {{ form.project }}
+                {% if form.project.help_text %}
+                <p class="form-help">{{ form.project.help_text }}</p>
+                {% endif %}
+                {% if form.project.errors %}
+                <p class="form-error">{{ form.project.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="{{ form.assigned_to.id_for_label }}">Assigned To</label>
+                {{ form.assigned_to }}
+                {% if form.assigned_to.help_text %}
+                <p class="form-help">{{ form.assigned_to.help_text }}</p>
+                {% endif %}
+                {% if form.assigned_to.errors %}
+                <p class="form-error">{{ form.assigned_to.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Priority</label>
+                <div class="priority-options">
+                    {% for value, label in form.priority.field.choices %}
+                    <div class="priority-option {{ value }} {% if form.priority.value == value %}selected{% endif %}"
+                         data-value="{{ value }}">
+                        {{ label }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {{ form.priority.as_hidden }}
+                {% if form.priority.errors %}
+                <p class="form-error">{{ form.priority.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="{{ form.due_date.id_for_label }}">Due Date</label>
+                {{ form.due_date }}
+                {% if form.due_date.help_text %}
+                <p class="form-help">{{ form.due_date.help_text }}</p>
+                {% endif %}
+                {% if form.due_date.errors %}
+                <p class="form-error">{{ form.due_date.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <a href="{% if form.instance.project %}{% url 'project-detail' form.instance.project.id %}{% else %}{% url 'project-list' %}{% endif %}"
+                   class="btn btn-secondary">
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    {% if form.instance.pk %}
+                    Update Task
+                    {% else %}
+                    Create Task
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const priorityOptions = document.querySelectorAll('.priority-option');
+    const priorityInput = document.querySelector('#id_priority');
+
+    priorityOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove selected class from all options
+            priorityOptions.forEach(opt => opt.classList.remove('selected'));
+            // Add selected class to clicked option
+            this.classList.add('selected');
+            // Update hidden input value
+            priorityInput.value = this.dataset.value;
+        });
+    });
+});
+</script>
+{% endblock %}
+{% endblock %} 

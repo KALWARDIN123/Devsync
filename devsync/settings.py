@@ -172,3 +172,17 @@ CELERY_TIMEZONE = TIME_ZONE
 
 # OpenAI settings
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'DevSync Team <noreply@devsync.com>')
+
+# For development, you can use the console backend instead:
+if DEBUG and not all([EMAIL_HOST_USER, EMAIL_HOST_PASSWORD]):
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    print("Warning: Email credentials not set. Using console backend for email.")

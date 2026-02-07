@@ -1,0 +1,20 @@
+You're Invited to Join {{ team_name }}!
+
+Hi there,
+
+{{ inviter_name }} has invited you to join their team "{{ team_name }}" on DevSync.
+
+{% if team_description %}
+Team Description:
+{{ team_description }}
+{% endif %}
+
+How to Join:
+1. Visit the DevSync Team Join Page: {{ join_url }}
+2. Enter the following invite code: {{ invite_code }}
+
+Note: This invite will expire in {{ expires_in_days }} days.
+
+---
+This invitation was sent to you through DevSync. If you didn't expect this invitation, you can safely ignore it.
+© {% now "Y" %} DevSync. All rights reserved. 
